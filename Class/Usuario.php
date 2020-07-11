@@ -53,13 +53,7 @@ class Usuario {
 
 		if (count($results) > 0){
 
-			$row = $results[0];
-
-			$this->setIdusuario($row['idusuarios']);
-			$this->setDeslogin($row['desloguin']);
-			$this->setDessenha($row['dessenha']);
-			$this->setDtcadastro(new Datetime($row['dtcadastro']));
-
+			$this->setData($results[0]);
 		}
 
 	}
@@ -72,12 +66,12 @@ class Usuario {
 
 	}
 
-	public static function search($loguin){
+	public static function search($login){
 
 		$sql = new Sql();
 
 		return $sql->select("SELECT * FROM tb_usuarios WHERE desloguin LIKE :SEARCH ORDER BY desloguin", array(
-			":SEARCH"=>"%".$loguin."%"
+			":SEARCH"=>"%".$login."%"
 		));
 
 	}
@@ -94,12 +88,7 @@ class Usuario {
 
 		if (count($results) > 0){
 
-			$row = $results[0];
-
-			$this->setIdusuario($row['idusuarios']);
-			$this->setDeslogin($row['desloguin']);
-			$this->setDessenha($row['dessenha']);
-			$this->setDtcadastro(new Datetime($row['dtcadastro']));
+			$this->setData($results[0]);
 
 		} else {
 
@@ -107,14 +96,45 @@ class Usuario {
 
 		}
 
+	}
+
+		public function setData($data){
+
+			$this->setIdusuario($data['idusuarios']);
+			$this->setDeslogin($data['desloguin']);
+			$this->setDessenha($data['dessenha']);
+			$this->setDtcadastro(new DateTime($data['dtcadastro']));
+
+		}
+
+
+		public function insert(){
+
+			$sql = new Sql();
+
+			$results = $sql->select("CALL sp_usuarios_insert(:LOGIN, :PASSWORD)", array(
+				':LOGIN'=>$this->getDeslogin(),
+				':PASSWORD'=>$this->getDessenha()
+			));
+
+			if (count($results) > 0) {
+				$this->setData($results[0]);
+			}
+
+	}
+
+	public function __construct($login = "", $password = ""){
+
+		$this->setDeslogin($login);
+		$this->setDessenha($password);
 
 	}
 
 	public function __toString(){
 
 		return json_encode(array(
-			"idusuario"=>$this->getIdusuario(),
-			"deslogin"=>$this->getDeslogin(),
+			"idusuarios"=>$this->getIdusuario(),
+			"desloguin"=>$this->getDeslogin(),
 			"dessenha"=>$this->getDessenha(),
 			"dtcadastro"=>$this->getDtcadastro()->format("d/m/Y H:i:s")
 		));
