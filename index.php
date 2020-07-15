@@ -32,11 +32,20 @@ $usuario->login("root", "!@#$");
 echo $usuario;
 */
 
-$aluno = new Usuario("aluno", "@alun0");
+/*$aluno = new Usuario("aluno", "@alun0");
 
 $aluno->insert();
 
 echo $aluno;
+*/
+
+$usuario = new Usuario();
+
+$usuario->loadById(8);
+
+$usuario->update("professor", "!@#$%¨&");
+
+echo $usuario;
 
 //$sql = new Sql();
 
